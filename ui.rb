@@ -1,10 +1,44 @@
 require 'gtk2'
 require './callbacks'
 
+class MainTrayIcon < Gtk::StatusIcon
+  attr_reader :menu
+  def initialize
+    super
+    self.stock = Gtk::Stock::MEDIA_PLAY
+    self.tooltip = "YAMPDC"
+  
+    openMainWindow = Gtk::MenuItem.new("Open YAMPDC")
+    quit = Gtk::MenuItem.new("Quit")
+  
+    quit.signal_connect("activate") { Gtk::main_quit }
+    openMainWindow.signal_connect("activate") do
+      window = MainWindow.new
+      window.show_all
+    end
+  
+    menu = Gtk::Menu.new
+    menu.append(openMainWindow)
+    menu.append(quit)
+    menu.show_all
+
+    signal_connect("popup-menu") do |tray, button, time|
+      menu.popup(nil, nil, button, time)
+    end
+  
+    signal_connect("activate") do
+      window = MainWindow.new
+      window.show_all
+    end
+  end
+end
+
 class MainWindow < Gtk::Window
   include Callback
   def initialize
     super
+
+    @border_width = 10
 
     mainVBox = Gtk::VBox.new(false, 0)
     controlBox = Gtk::HBox.new(false, 0)
@@ -91,7 +125,6 @@ class MainWindow < Gtk::Window
   end
 end
 
-win = MainWindow.new
-win.show_all
-win.border_width = 10
+trayIcon = MainTrayIcon.new
+
 Gtk.main
