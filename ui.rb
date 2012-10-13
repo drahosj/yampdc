@@ -2,23 +2,43 @@ require 'gtk2'
 require './callbacks'
 
 class MainTrayIcon < Gtk::StatusIcon
-  attr_reader :menu
-  def initialize
-    super
+  include Callback
+  def initialize(app)
+    super()
+
+    @app = app
+
     self.stock = Gtk::Stock::MEDIA_PLAY
     self.tooltip = "YAMPDC"
   
     openMainWindow = Gtk::MenuItem.new("Open YAMPDC")
     quit = Gtk::MenuItem.new("Quit")
   
+    itemPlay = Gtk::MenuItem.new("Play/Pause")
+    itemStop = Gtk::MenuItem.new("Stop")
+    itemNext = Gtk::MenuItem.new("Next")
+    itemPrev = Gtk::MenuItem.new("Previous")
+
+    itemPlay.signal_connect("activate") {cb_play_pause(@app)}
+    itemStop.signal_connect("activate") {cb_stop(@app)}
+    itemNext.signal_connect("activate") {cb_next(@app)}
+    itemPrev.signal_connect("activate") {cb_prev(@app)}
+
     quit.signal_connect("activate") { Gtk::main_quit }
     openMainWindow.signal_connect("activate") do
-      window = MainWindow.new
+      window = MainWindow.new(@app)
       window.show_all
     end
   
     menu = Gtk::Menu.new
+  
+    menu.append(itemPlay)
+    menu.append(itemStop)
+    menu.append(itemNext)
+    menu.append(itemPrev)
+    menu.append(Gtk::SeparatorMenuItem.new)
     menu.append(openMainWindow)
+    menu.append(Gtk::SeparatorMenuItem.new)
     menu.append(quit)
     menu.show_all
 
@@ -27,7 +47,7 @@ class MainTrayIcon < Gtk::StatusIcon
     end
   
     signal_connect("activate") do
-      window = MainWindow.new
+      window = MainWindow.new(@app)
       window.show_all
     end
   end
@@ -35,8 +55,10 @@ end
 
 class MainWindow < Gtk::Window
   include Callback
-  def initialize
-    super
+  def initialize(app)
+    super()
+
+    @app = app
 
     @border_width = 10
 
@@ -59,7 +81,11 @@ class MainWindow < Gtk::Window
                                Gtk::IconSize::SMALL_TOOLBAR)
 
     playButton = Gtk::Button.new
-    playButton.image = playIcon
+    unless @app.mpd.playing?
+      playButton.image = playIcon
+    else
+      playButton.image = pauseIcon
+    end
 
     stopButton = Gtk::Button.new
     stopButton.image = stopIcon
@@ -70,32 +96,24 @@ class MainWindow < Gtk::Window
     prevButton = Gtk::Button.new
     prevButton.image = prevIcon
 
-#    #### Switched from eventboxes to buttons!!!###
-#    playEventBox = Gtk::EventBox.new()
-#    playEventBox.add(playIcon)
-#    playEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
-#
-#    pauseEventBox = Gtk::EventBox.new()
-#    pauseEventBox.add(pauseIcon)
-#    pauseEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
-#
-#    nextEventBox = Gtk::EventBox.new()
-#    nextEventBox.add(nextIcon)
-#    nextEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
-#
-#    prevEventBox = Gtk::EventBox.new()
-#    prevEventBox.add(prevIcon)
-#    prevEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
-
     playButton.relief = Gtk::RELIEF_NONE
     stopButton.relief = Gtk::RELIEF_NONE
     nextButton.relief = Gtk::RELIEF_NONE
     prevButton.relief = Gtk::RELIEF_NONE
 
-    playButton.signal_connect("clicked") {cb_play_pause}
-    stopButton.signal_connect("clicked") {cb_stop}
-    nextButton.signal_connect("clicked") {cb_next}
-    prevButton.signal_connect("clicked") {cb_prev}
+    playButton.signal_connect("clicked"){ |w| cb_play_pause(@app, w)}
+    stopButton.signal_connect("clicked") do 
+      cb_stop(@app)
+      playButton.image = playIcon
+    end
+    nextButton.signal_connect("clicked") do
+      cb_next(@app)
+      playButton.image = pauseIcon
+    end
+    prevButton.signal_connect("clicked") do 
+      cb_prev(@app)
+      playButton.image = pauseIcon
+    end
 
     controlBox.pack_start(prevButton, false, false, 0)
     controlBox.pack_start(playButton, false, false, 0)
@@ -106,25 +124,5 @@ class MainWindow < Gtk::Window
     mainVBox.pack_start(Gtk::HSeparator.new, false, false, 0)
 
     add(mainVBox)
-
-#    playEventBox.realize
-#    playEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
-#    playEventBox.signal_connect('button_press_event') { cb_play_pause }
-#
-#    pauseEventBox.realize
-#    pauseEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
-#    pauseEventBox.signal_connect('button_press_event') { cb_play_pause }
-#
-#    nextEventBox.realize
-#    nextEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
-#    nextEventBox.signal_connect('button_press_event') { cb_play_pause }
-#
-#    prevEventBox.realize
-#    prevEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
-#    prevEventBox.signal_connect('button_press_event') {cb_play_pause }
   end
 end
-
-trayIcon = MainTrayIcon.new
-
-Gtk.main
