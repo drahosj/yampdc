@@ -15,19 +15,19 @@ class MainWindow < Gtk::Window
     @controlAlignment = Gtk::Alignment.new(0.5, 0.5, 0, 0)
     @controlAlignment.add(@controlBox)
  
-    playIcon = Gtk::Image.new(Gtk::Stock::MEDIA_PLAY, Gtk::IconSize::SMALL_TOOLBAR)
+    playIcon = Gtk::Image.new(Gtk::Stock::MEDIA_PLAY, \
+                              Gtk::IconSize::SMALL_TOOLBAR)
     @playEventBox = Gtk::EventBox.new()
     @playEventBox.add(playIcon)
     @playEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
 
-    @controlBox.pack_start(@playButton, false, false, 0)
+    @controlBox.pack_start(@playEventBox, false, false, 0)
 
     @mainVBox.pack_start(@controlAlignment, false, false, 0)
     @mainVBox.pack_start(Gtk::HSeparator.new, false, false, 0)
 
-    add(@playEventBox)
     add(@mainVBox)
-    
+
     @playEventBox.realize
     @playEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
 
@@ -37,6 +37,6 @@ class MainWindow < Gtk::Window
 end
 
 win = MainWindow.new
-win.border_width = 10
 win.show_all
+win.border_width = 10
 Gtk.main
