@@ -1,10 +1,8 @@
 require 'gtk2'
+require './callbacks'
 
 class MainWindow < Gtk::Window
-  def cb_play_pause
-    puts "Button Pressed"
-  end
-
+  include Callback
   def initialize
     super
 
@@ -60,6 +58,11 @@ class MainWindow < Gtk::Window
     @nextButton.relief = Gtk::RELIEF_NONE
     @prevButton.relief = Gtk::RELIEF_NONE
 
+    @playButton.signal_connect("clicked") {cb_play_pause}
+    @stopButton.signal_connect("clicked") {cb_stop}
+    @nextButton.signal_connect("clicked") {cb_next}
+    @prevButton.signal_connect("clicked") {cb_prev}
+
     @controlBox.pack_start(@prevButton, false, false, 0)
     @controlBox.pack_start(@playButton, false, false, 0)
     @controlBox.pack_start(@stopButton, false, false, 0)
@@ -85,7 +88,6 @@ class MainWindow < Gtk::Window
 #    @prevEventBox.realize
 #    @prevEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
 #    @prevEventBox.signal_connect('button_press_event') {cb_play_pause }
-
   end
 end
 
