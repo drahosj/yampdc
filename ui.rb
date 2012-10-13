@@ -21,50 +21,70 @@ class MainWindow < Gtk::Window
                               Gtk::IconSize::SMALL_TOOLBAR)
     @nextIcon = Gtk::Image.new(Gtk::Stock::MEDIA_NEXT, \
                               Gtk::IconSize::SMALL_TOOLBAR)
-    @previousIcon = Gtk::Image.new(Gtk::Stock::MEDIA_PREVIOUS, \
+    @prevIcon = Gtk::Image.new(Gtk::Stock::MEDIA_PREVIOUS, \
                               Gtk::IconSize::SMALL_TOOLBAR)
+    @stopIcon = Gtk::Image.new(Gtk::Stock::MEDIA_STOP, \
+                               Gtk::IconSize::SMALL_TOOLBAR)
 
-    @playEventBox = Gtk::EventBox.new()
-    @playEventBox.add(@playIcon)
-    @playEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
+    @playButton = Gtk::Button.new
+    @playButton.image = @playIcon
 
-    @pauseEventBox = Gtk::EventBox.new()
-    @pauseEventBox.add(@pauseIcon)
-    @pauseEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
+    @stopButton = Gtk::Button.new
+    @stopButton.image = @stopIcon
 
-    @nextEventBox = Gtk::EventBox.new()
-    @nextEventBox.add(@nextIcon)
-    @nextEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
+    @nextButton = Gtk::Button.new
+    @nextButton.image = @nextIcon
 
-    @previousEventBox = Gtk::EventBox.new()
-    @previousEventBox.add(@previousIcon)
-    @previousEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
+    @prevButton = Gtk::Button.new
+    @prevButton.image = @prevIcon
 
-    @controlBox.pack_start(@playEventBox, false, false, 0)
-    @controlBox.pack_start(@pauseEventBox, false, false, 0)
-    @controlBox.pack_start(@nextEventBox, false, false, 0)
-    @controlBox.pack_start(@previousEventBox, false, false, 0)
+#    #### Switched from eventboxes to buttons!!!###
+#    @playEventBox = Gtk::EventBox.new()
+#    @playEventBox.add(@playIcon)
+#    @playEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
+#
+#    @pauseEventBox = Gtk::EventBox.new()
+#    @pauseEventBox.add(@pauseIcon)
+#    @pauseEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
+#
+#    @nextEventBox = Gtk::EventBox.new()
+#    @nextEventBox.add(@nextIcon)
+#    @nextEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
+#
+#    @prevEventBox = Gtk::EventBox.new()
+#    @prevEventBox.add(@prevIcon)
+#    @prevEventBox.events = Gdk::Event::BUTTON_PRESS_MASK
+
+    @playButton.relief = Gtk::RELIEF_NONE
+    @stopButton.relief = Gtk::RELIEF_NONE
+    @nextButton.relief = Gtk::RELIEF_NONE
+    @prevButton.relief = Gtk::RELIEF_NONE
+
+    @controlBox.pack_start(@prevButton, false, false, 0)
+    @controlBox.pack_start(@playButton, false, false, 0)
+    @controlBox.pack_start(@stopButton, false, false, 0)
+    @controlBox.pack_start(@nextButton, false, false, 0)
 
     @mainVBox.pack_start(@controlAlignment, false, false, 0)
     @mainVBox.pack_start(Gtk::HSeparator.new, false, false, 0)
 
     add(@mainVBox)
 
-    @playEventBox.realize
-    @playEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
-    @playEventBox.signal_connect('button_press_event') { cb_play_pause }
-
-    @pauseEventBox.realize
-    @pauseEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
-    @pauseEventBox.signal_connect('button_press_event') { cb_play_pause }
-
-    @nextEventBox.realize
-    @nextEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
-    @nextEventBox.signal_connect('button_press_event') { cb_play_pause }
-
-    @previousEventBox.realize
-    @previousEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
-    @previousEventBox.signal_connect('button_press_event') { cb_play_pause }
+#    @playEventBox.realize
+#    @playEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
+#    @playEventBox.signal_connect('button_press_event') { cb_play_pause }
+#
+#    @pauseEventBox.realize
+#    @pauseEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
+#    @pauseEventBox.signal_connect('button_press_event') { cb_play_pause }
+#
+#    @nextEventBox.realize
+#    @nextEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
+#    @nextEventBox.signal_connect('button_press_event') { cb_play_pause }
+#
+#    @prevEventBox.realize
+#    @prevEventBox.window.cursor = Gdk::Cursor.new(Gdk::Cursor::HAND1)
+#    @prevEventBox.signal_connect('button_press_event') {cb_play_pause }
 
   end
 end
