@@ -101,19 +101,10 @@ class MainWindow < Gtk::Window
     nextButton.relief = Gtk::RELIEF_NONE
     prevButton.relief = Gtk::RELIEF_NONE
 
-    playButton.signal_connect("clicked"){ |w| cb_play_pause(@app, w)}
-    stopButton.signal_connect("clicked") do 
-      cb_stop(@app)
-      playButton.image = playIcon
-    end
-    nextButton.signal_connect("clicked") do
-      cb_next(@app)
-      playButton.image = pauseIcon
-    end
-    prevButton.signal_connect("clicked") do 
-      cb_prev(@app)
-      playButton.image = pauseIcon
-    end
+    playButton.signal_connect("clicked"){cb_play_pause(@app, playButton)}
+    stopButton.signal_connect("clicked"){cb_stop(@app, playButton)}
+    nextButton.signal_connect("clicked"){cb_next(@app, playButton)}
+    prevButton.signal_connect("clicked"){cb_prev(@app, playButton)}
 
     controlBox.pack_start(prevButton, false, false, 0)
     controlBox.pack_start(playButton, false, false, 0)
