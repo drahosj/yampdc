@@ -1,0 +1,16 @@
+YAMPDC - Yet Another Music Player Daemon Client
+
+YAMPDC is a music player daemon client written in Ruby. It runs in the 
+background with a system tray icon. Playback control can be done by 
+right-clicking on the icon. Left-clicking on the systray icon will bring up the 
+main window. From this window, song information can be seen and playback can be 
+controlled, as well as a progress bar will show.
+
+DEPENDS:
+
+Gems: 
+	gtk2
+	librmpd => librmpd.rubyforge.org
+
+Usage: 
+	Use ruby to execute yampdc.rb.
